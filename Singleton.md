@@ -14,49 +14,102 @@ Una implementación habitual utiliza:
 
 Cada llamada al método de acceso devuelve el mismo objeto.
 
-## Ejemplo en Java
+## Código base en Java
 
-La siguiente clase representa una configuración compartida e inmutable:
+La siguiente implementación crea la instancia la primera vez que se solicita:
 
 ```java
-public final class Configuracion {
-    private static final Configuracion INSTANCIA = new Configuracion();
+public final class MyClass {
 
-    private final String nombreAplicacion;
+    private static MyClass instance;
 
-    private Configuracion() {
-        nombreAplicacion = "Mi aplicación";
+    private MyClass() {
     }
 
-    public static Configuracion getInstancia() {
-        return INSTANCIA;
+    public static MyClass getInstance() {
+        if (instance == null) {
+            instance = new MyClass();
+        }
+        return instance;
     }
 
-    public String getNombreAplicacion() {
-        return nombreAplicacion;
+}
+```
+
+## Ejemplos
+
+### 1. Configuración compartida
+
+Una aplicación puede centralizar datos de configuración disponibles para todos sus componentes:
+
+```java
+public final class Configuration {
+    private static Configuration instance;
+
+    private final String applicationName;
+
+    private Configuration() {
+        applicationName = "My application";
+    }
+
+    public static Configuration getInstance() {
+        if (instance == null) {
+            instance = new Configuration();
+        }
+        return instance;
+    }
+
+    public String getApplicationName() {
+        return applicationName;
     }
 }
 ```
 
-Uso desde otra clase:
+```java
+Configuration first = Configuration.getInstance();
+Configuration second = Configuration.getInstance();
+
+System.out.println(first == second); // true
+System.out.println(first.getApplicationName()); // My application
+```
+
+### 2. Registro de eventos
+
+Un registro único puede recibir mensajes desde distintas partes de la aplicación:
 
 ```java
-public class Main {
-    public static void main(String[] args) {
-        Configuracion primera = Configuracion.getInstancia();
-        Configuracion segunda = Configuracion.getInstancia();
+public final class EventLogger {
+    private static EventLogger instance;
 
-        System.out.println(primera == segunda); // true: es el mismo objeto
-        System.out.println(primera.getNombreAplicacion()); // Mi aplicación
+    private EventLogger() {
+    }
+
+    public static EventLogger getInstance() {
+        if (instance == null) {
+            instance = new EventLogger();
+        }
+        return instance;
+    }
+
+    public void log(String message) {
+        System.out.println("Event: " + message);
     }
 }
 ```
 
-Esta implementación crea la instancia al inicializar la clase. Java garantiza que esa inicialización sea segura ante llamadas concurrentes. Esto no implica que cualquier método o estado mutable que se agregue a la clase sea automáticamente seguro para múltiples hilos.
+```java
+EventLogger primaryLogger = EventLogger.getInstance();
+EventLogger secondaryLogger = EventLogger.getInstance();
+
+primaryLogger.log("User authenticated");
+System.out.println(primaryLogger == secondaryLogger); // true
+```
+
+Los tres fragmentos usan inicialización diferida. La versión base y los ejemplos no son seguros ante accesos concurrentes: dos hilos podrían crear instancias distintas al mismo tiempo.
 
 ## Formas de inicialización
 
-- **Anticipada:** la instancia se crea al inicializar la clase, como en el ejemplo. Es sencilla, pero puede crear el objeto aunque finalmente no se utilice.
+- **Anticipada:** la instancia se crea al inicializar la clase. Es sencilla, pero puede crear el objeto aunque finalmente no se utilice.
 - **Diferida:** la instancia se crea cuando se solicita por primera vez. Puede evitar trabajo innecesario, pero requiere una implementación que controle correctamente el acceso concurrente.
 
 ## ¿Cuándo utilizarlo?
