@@ -197,21 +197,26 @@ public class SmsMessageService extends MessageService {
 
 #### Desarrollador 4: integración en la aplicación
 
-El desarrollador 4 elige el servicio que necesita y programa contra el contrato `MessageService`; no necesita conocer cómo se construye cada canal.
+El desarrollador 4 concentra la lógica de envío en un método que recibe `MessageService`. Ese método no conoce email ni SMS: puede trabajar con cualquier canal que extienda el módulo genérico. Las clases concretas se eligen únicamente al configurar la aplicación.
 
 `Main.java`
 
 ```java
 public class Main {
-    public static void main(String[] args) {
-        MessageService emailService = new EmailMessageService(
-            "user@example.com",
-            "Order update"
-        );
-        MessageService smsService = new SmsMessageService("+1 555 0100");
+    private static void send(MessageService service, String message) {
+        System.out.println(service.sendMessage(message));
+    }
 
-        System.out.println(emailService.sendMessage("Your order has been shipped"));
-        System.out.println(smsService.sendMessage("Your verification code is 123456"));
+    public static void main(String[] args) {
+        send(
+            new EmailMessageService("user@example.com", "Order update"),
+            "Your order has been shipped"
+        );
+
+        send(
+            new SmsMessageService("+1 555 0100"),
+            "Your verification code is 123456"
+        );
     }
 }
 ```
