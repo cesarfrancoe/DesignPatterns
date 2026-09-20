@@ -19,18 +19,30 @@ El creador puede contener lógica común que usa el producto creado por el méto
 
 La siguiente implementación permite que cada creador elija qué producto construir:
 
+Cada bloque siguiente corresponde a un archivo Java independiente:
+
+`Product.java`
+
 ```java
 public interface Product {
     void use();
 }
+```
 
+`ConcreteProductA.java`
+
+```java
 public class ConcreteProductA implements Product {
     @Override
     public void use() {
         System.out.println("Using product A");
     }
 }
+```
 
+`Creator.java`
+
+```java
 public abstract class Creator {
     public abstract Product createProduct();
 
@@ -39,7 +51,11 @@ public abstract class Creator {
         product.use();
     }
 }
+```
 
+`ConcreteCreatorA.java`
+
+```java
 public class ConcreteCreatorA extends Creator {
     @Override
     public Product createProduct() {
@@ -48,9 +64,15 @@ public class ConcreteCreatorA extends Creator {
 }
 ```
 
+`Main.java`
+
 ```java
-Creator creator = new ConcreteCreatorA();
-creator.processProduct(); // Using product A
+public class Main {
+    public static void main(String[] args) {
+        Creator creator = new ConcreteCreatorA();
+        creator.processProduct(); // Using product A
+    }
+}
 ```
 
 ## Ejemplos
@@ -61,25 +83,41 @@ creator.processProduct(); // Using product A
 
 **Solución:** `NotificationService` declara `createNotification()` como Factory Method. Cada servicio concreto decide qué canal crear, mientras que el envío usa solamente la interfaz `Notification`:
 
+Cada bloque siguiente corresponde a un archivo Java independiente:
+
+`Notification.java`
+
 ```java
 public interface Notification {
     void send(String message);
 }
+```
 
+`EmailNotification.java`
+
+```java
 public class EmailNotification implements Notification {
     @Override
     public void send(String message) {
         System.out.println("Sending email: " + message);
     }
 }
+```
 
+`SmsNotification.java`
+
+```java
 public class SmsNotification implements Notification {
     @Override
     public void send(String message) {
         System.out.println("Sending SMS: " + message);
     }
 }
+```
 
+`NotificationService.java`
+
+```java
 public abstract class NotificationService {
     public abstract Notification createNotification();
 
@@ -88,14 +126,22 @@ public abstract class NotificationService {
         notification.send(message);
     }
 }
+```
 
+`EmailNotificationService.java`
+
+```java
 public class EmailNotificationService extends NotificationService {
     @Override
     public Notification createNotification() {
         return new EmailNotification();
     }
 }
+```
 
+`SmsNotificationService.java`
+
+```java
 public class SmsNotificationService extends NotificationService {
     @Override
     public Notification createNotification() {
@@ -104,12 +150,18 @@ public class SmsNotificationService extends NotificationService {
 }
 ```
 
-```java
-NotificationService emailService = new EmailNotificationService();
-NotificationService smsService = new SmsNotificationService();
+`Main.java`
 
-emailService.notifyUser("Your order has been shipped");
-smsService.notifyUser("Your verification code is 123456");
+```java
+public class Main {
+    public static void main(String[] args) {
+        NotificationService emailService = new EmailNotificationService();
+        NotificationService smsService = new SmsNotificationService();
+
+        emailService.notifyUser("Your order has been shipped");
+        smsService.notifyUser("Your verification code is 123456");
+    }
+}
 ```
 
 ### 2. Generación de documentos
@@ -118,25 +170,41 @@ smsService.notifyUser("Your verification code is 123456");
 
 **Solución:** `ReportGenerator` prepara el contenido y delega la creación del exportador en `createExporter()`. Cada generador concreto entrega el exportador apropiado, mientras que la lógica de generación trabaja con `ReportExporter`:
 
+Cada bloque siguiente corresponde a un archivo Java independiente:
+
+`ReportExporter.java`
+
 ```java
 public interface ReportExporter {
     void export(String content);
 }
+```
 
+`PdfReportExporter.java`
+
+```java
 public class PdfReportExporter implements ReportExporter {
     @Override
     public void export(String content) {
         System.out.println("Exporting PDF: " + content);
     }
 }
+```
 
+`DocReportExporter.java`
+
+```java
 public class DocReportExporter implements ReportExporter {
     @Override
     public void export(String content) {
         System.out.println("Exporting DOC: " + content);
     }
 }
+```
 
+`ReportGenerator.java`
+
+```java
 public abstract class ReportGenerator {
     public abstract ReportExporter createExporter();
 
@@ -145,14 +213,22 @@ public abstract class ReportGenerator {
         exporter.export(content);
     }
 }
+```
 
+`PdfReportGenerator.java`
+
+```java
 public class PdfReportGenerator extends ReportGenerator {
     @Override
     public ReportExporter createExporter() {
         return new PdfReportExporter();
     }
 }
+```
 
+`DocReportGenerator.java`
+
+```java
 public class DocReportGenerator extends ReportGenerator {
     @Override
     public ReportExporter createExporter() {
@@ -161,12 +237,18 @@ public class DocReportGenerator extends ReportGenerator {
 }
 ```
 
-```java
-ReportGenerator pdfGenerator = new PdfReportGenerator();
-ReportGenerator docGenerator = new DocReportGenerator();
+`Main.java`
 
-pdfGenerator.generate("Monthly sales report");
-docGenerator.generate("Monthly sales report");
+```java
+public class Main {
+    public static void main(String[] args) {
+        ReportGenerator pdfGenerator = new PdfReportGenerator();
+        ReportGenerator docGenerator = new DocReportGenerator();
+
+        pdfGenerator.generate("Monthly sales report");
+        docGenerator.generate("Monthly sales report");
+    }
+}
 ```
 
 ## ¿Cuándo utilizarlo?
