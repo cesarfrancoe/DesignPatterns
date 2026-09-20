@@ -79,9 +79,9 @@ public class Main {
 
 ### 1. Envío de notificaciones
 
-**Problema:** el desarrollador 1 debe crear un módulo genérico para enviar mensajes, pero todavía no sabe qué canales estarán disponibles en el futuro. Si el módulo crea directamente objetos de correo electrónico o SMS, quedará acoplado a canales que aún no debería conocer y deberá modificarse cuando aparezca uno nuevo.
+**Problema:** una empresa necesita incorporar en su aplicación un modelo genérico para el envío de mensajes. En esta etapa solo se sabe que distintas áreas del sistema deberán enviar mensajes; todavía no se han definido los medios concretos de envío. El modelo debe permitir incorporar esos medios más adelante sin modificar la lógica común.
 
-**Solución:** el desarrollador 1 define el contrato `MessageChannel` y la lógica común en `MessageService`, sin depender de canales concretos. Más adelante, los desarrolladores 2 y 3 incorporan email y SMS sin modificar el módulo original. `MessageService` declara `createMessageChannel()` como Factory Method, por lo que cada servicio concreto decide qué canal crear:
+**Solución inicial:** el desarrollador 1 define el contrato `MessageChannel` y la lógica común en `MessageService`, sin depender de ningún canal concreto. `MessageService` declara `createMessageChannel()` como Factory Method, para que las futuras extensiones decidan qué canal crear:
 
 Cada bloque siguiente corresponde a un archivo Java independiente:
 
@@ -108,9 +108,9 @@ public abstract class MessageService {
 }
 ```
 
-#### Desarrollador 2: canal de correo electrónico
+#### Novedad 1: envío por correo electrónico
 
-El correo electrónico necesita un destinatario y un asunto, datos que no aplican a un SMS.
+Posteriormente, la empresa necesita enviar mensajes por correo electrónico. El desarrollador 2 agrega esta implementación, que requiere un destinatario y un asunto, sin modificar el módulo genérico.
 
 `EmailNotification.java`
 
@@ -139,7 +139,7 @@ public class EmailMessageService extends MessageService {
     private final String recipient;
     private final String subject;
 
-    public EmailNotificationService(String recipient, String subject) {
+    public EmailMessageService(String recipient, String subject) {
         this.recipient = recipient;
         this.subject = subject;
     }
@@ -151,9 +151,9 @@ public class EmailMessageService extends MessageService {
 }
 ```
 
-#### Desarrollador 3: canal de SMS
+#### Novedad 2: envío por SMS
 
-Un SMS se dirige a un número telefónico y tiene un límite de 160 caracteres.
+Más adelante surge la necesidad de enviar mensajes SMS. El desarrollador 3 incorpora este canal, que usa un número telefónico y limita el texto a 160 caracteres, sin alterar las clases creadas en las etapas anteriores.
 
 `SmsNotification.java`
 
@@ -184,7 +184,7 @@ public class SmsNotification implements MessageChannel {
 public class SmsMessageService extends MessageService {
     private final String phoneNumber;
 
-    public SmsNotificationService(String phoneNumber) {
+    public SmsMessageService(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
