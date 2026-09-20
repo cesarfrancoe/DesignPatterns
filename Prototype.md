@@ -28,10 +28,10 @@ public class MyClass {
     }
 
     public MyClass(MyClass source) {
-        this.name = source.name;
+        this.name = source.getName();
     }
 
-    public MyClass copy() {
+    public MyClass clone() {
         return new MyClass(this);
     }
 
@@ -67,13 +67,29 @@ public class Document {
     }
 
     public Document(Document source) {
-        this.font = source.font;
-        this.margin = source.margin;
-        this.title = source.title;
+        this.font = source.getFont();
+        this.margin = source.getMargin();
+        this.title = source.getTitle();
     }
 
-    public Document copy() {
+    public Document clone() {
         return new Document(this);
+    }
+
+    public String getFont() {
+        return font;
+    }
+
+    public void setFont(String font) {
+        this.font = font;
+    }
+
+    public int getMargin() {
+        return margin;
+    }
+
+    public void setMargin(int margin) {
+        this.margin = margin;
     }
 
     public void setTitle(String title) {
@@ -88,8 +104,8 @@ public class Document {
 
 ```java
 Document template = new Document("Arial", 20, "Untitled");
-Document report = template.copy();
-Document invoice = template.copy();
+Document report = template.clone();
+Document invoice = template.clone();
 
 report.setTitle("Monthly report");
 invoice.setTitle("Invoice 2026-001");
@@ -120,14 +136,38 @@ public class GameCharacter {
     }
 
     public GameCharacter(GameCharacter source) {
-        this.type = source.type;
-        this.health = source.health;
-        this.speed = source.speed;
-        this.name = source.name;
+        this.type = source.getType();
+        this.health = source.getHealth();
+        this.speed = source.getSpeed();
+        this.name = source.getName();
     }
 
-    public GameCharacter copy() {
+    public GameCharacter clone() {
         return new GameCharacter(this);
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public int getHealth() {
+        return health;
+    }
+
+    public void setHealth(int health) {
+        this.health = health;
+    }
+
+    public int getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(int speed) {
+        this.speed = speed;
     }
 
     public void setName(String name) {
@@ -142,8 +182,8 @@ public class GameCharacter {
 
 ```java
 GameCharacter archerPrototype = new GameCharacter("Archer", 100, 8, "Unknown");
-GameCharacter firstArcher = archerPrototype.copy();
-GameCharacter secondArcher = archerPrototype.copy();
+GameCharacter firstArcher = archerPrototype.clone();
+GameCharacter secondArcher = archerPrototype.clone();
 
 firstArcher.setName("Robin");
 secondArcher.setName("Marian");
@@ -176,6 +216,6 @@ No es la mejor opción si construir el objeto es simple o si copiarlo es más co
 
 ## Consideraciones importantes
 
-- En Java, implementar `Cloneable` y sobrescribir `clone()` es posible, pero los constructores de copia o métodos como `copy()` suelen ser más explícitos y fáciles de controlar.
+- En Java, implementar `Cloneable` y sobrescribir `clone()` es posible, pero los constructores de copia o métodos propios como los de estos ejemplos suelen ser más explícitos y fáciles de controlar.
 - Define con claridad qué objetos internos se comparten y cuáles se copian de forma independiente.
 - Si los prototipos se registran y se reutilizan globalmente, protege su estado para evitar que una modificación accidental afecte a futuras copias.
