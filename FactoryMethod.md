@@ -25,7 +25,7 @@ Cada bloque siguiente corresponde a un archivo Java independiente:
 
 ```java
 public interface Product {
-    void use();
+    String use();
 }
 ```
 
@@ -34,8 +34,8 @@ public interface Product {
 ```java
 public class ConcreteProductA implements Product {
     @Override
-    public void use() {
-        System.out.println("Using product A");
+    public String use() {
+        return "Using product A";
     }
 }
 ```
@@ -46,9 +46,9 @@ public class ConcreteProductA implements Product {
 public abstract class Creator {
     public abstract Product createProduct();
 
-    public void processProduct() {
+    public String processProduct() {
         Product product = createProduct();
-        product.use();
+        return product.use();
     }
 }
 ```
@@ -70,7 +70,7 @@ public class ConcreteCreatorA extends Creator {
 public class Main {
     public static void main(String[] args) {
         Creator creator = new ConcreteCreatorA();
-        creator.processProduct(); // Using product A
+        System.out.println(creator.processProduct()); // Using product A
     }
 }
 ```
@@ -89,7 +89,7 @@ Cada bloque siguiente corresponde a un archivo Java independiente:
 
 ```java
 public interface Notification {
-    void send(String message);
+    String send(String message);
 }
 ```
 
@@ -98,8 +98,8 @@ public interface Notification {
 ```java
 public class EmailNotification implements Notification {
     @Override
-    public void send(String message) {
-        System.out.println("Sending email: " + message);
+    public String send(String message) {
+        return "Sending email: " + message;
     }
 }
 ```
@@ -109,8 +109,8 @@ public class EmailNotification implements Notification {
 ```java
 public class SmsNotification implements Notification {
     @Override
-    public void send(String message) {
-        System.out.println("Sending SMS: " + message);
+    public String send(String message) {
+        return "Sending SMS: " + message;
     }
 }
 ```
@@ -121,9 +121,9 @@ public class SmsNotification implements Notification {
 public abstract class NotificationService {
     public abstract Notification createNotification();
 
-    public void notifyUser(String message) {
+    public String notifyUser(String message) {
         Notification notification = createNotification();
-        notification.send(message);
+        return notification.send(message);
     }
 }
 ```
@@ -158,8 +158,8 @@ public class Main {
         NotificationService emailService = new EmailNotificationService();
         NotificationService smsService = new SmsNotificationService();
 
-        emailService.notifyUser("Your order has been shipped");
-        smsService.notifyUser("Your verification code is 123456");
+        System.out.println(emailService.notifyUser("Your order has been shipped"));
+        System.out.println(smsService.notifyUser("Your verification code is 123456"));
     }
 }
 ```
@@ -176,7 +176,7 @@ Cada bloque siguiente corresponde a un archivo Java independiente:
 
 ```java
 public interface ReportExporter {
-    void export(String content);
+    String export(String content);
 }
 ```
 
@@ -185,8 +185,8 @@ public interface ReportExporter {
 ```java
 public class PdfReportExporter implements ReportExporter {
     @Override
-    public void export(String content) {
-        System.out.println("Exporting PDF: " + content);
+    public String export(String content) {
+        return "Exporting PDF: " + content;
     }
 }
 ```
@@ -196,8 +196,8 @@ public class PdfReportExporter implements ReportExporter {
 ```java
 public class DocReportExporter implements ReportExporter {
     @Override
-    public void export(String content) {
-        System.out.println("Exporting DOC: " + content);
+    public String export(String content) {
+        return "Exporting DOC: " + content;
     }
 }
 ```
@@ -208,9 +208,9 @@ public class DocReportExporter implements ReportExporter {
 public abstract class ReportGenerator {
     public abstract ReportExporter createExporter();
 
-    public void generate(String content) {
+    public String generate(String content) {
         ReportExporter exporter = createExporter();
-        exporter.export(content);
+        return exporter.export(content);
     }
 }
 ```
@@ -245,8 +245,8 @@ public class Main {
         ReportGenerator pdfGenerator = new PdfReportGenerator();
         ReportGenerator docGenerator = new DocReportGenerator();
 
-        pdfGenerator.generate("Monthly sales report");
-        docGenerator.generate("Monthly sales report");
+        System.out.println(pdfGenerator.generate("Monthly sales report"));
+        System.out.println(docGenerator.generate("Monthly sales report"));
     }
 }
 ```
