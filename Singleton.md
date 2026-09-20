@@ -10,7 +10,7 @@ Una implementación habitual utiliza:
 
 1. Un **constructor privado** para impedir que otras clases creen objetos directamente.
 2. Un **atributo de clase (static)** que almacena la única instancia (se recomienda llamarlo instance).
-3. Un **método de clase (static)** que devuelve esa instancia (se recomienda llmarlo getInstance()).
+3. Un **método de clase (static)** que devuelve esa instancia (se recomienda llamarlo getInstance()).
 
 Cada llamada al método de acceso devuelve el mismo objeto.
 
