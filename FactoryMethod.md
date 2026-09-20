@@ -204,11 +204,11 @@ El cliente elige el servicio que necesita y trabaja con el contrato `Notificatio
 ```java
 public class Main {
     public static void main(String[] args) {
-    NotificationService emailService = new EmailNotificationService(
-        "user@example.com",
-        "Order update"
-    );
-    NotificationService smsService = new SmsNotificationService("+1 555 0100");
+        NotificationService emailService = new EmailNotificationService(
+            "user@example.com",
+            "Order update"
+        );
+        NotificationService smsService = new SmsNotificationService("+1 555 0100");
 
         System.out.println(emailService.notifyUser("Your order has been shipped"));
         System.out.println(smsService.notifyUser("Your verification code is 123456"));
