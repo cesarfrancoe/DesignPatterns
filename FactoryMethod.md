@@ -195,9 +195,9 @@ public class SmsMessageService extends MessageService {
 }
 ```
 
-#### Cliente
+#### Desarrollador 4: integración en la aplicación
 
-El cliente elige el servicio que necesita y trabaja con el contrato `MessageService`; no necesita conocer cómo se construye cada canal.
+El desarrollador 4 elige el servicio que necesita y programa contra el contrato `MessageService`; no necesita conocer cómo se construye cada canal.
 
 `Main.java`
 
