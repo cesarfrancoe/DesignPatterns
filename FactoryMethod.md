@@ -79,43 +79,43 @@ public class Main {
 
 ### 1. Envío de notificaciones
 
-**Problema:** un equipo desarrolla una aplicación que debe notificar a sus usuarios por distintos canales, como correo electrónico o mensajes SMS. Si el servicio principal crea directamente objetos `EmailNotification` o `SmsNotification`, debe conocer cada clase concreta y cambiar cada vez que otro desarrollador incorpora un canal nuevo.
+**Problema:** el desarrollador 1 debe crear un módulo genérico para enviar mensajes, pero todavía no sabe qué canales estarán disponibles en el futuro. Si el módulo crea directamente objetos de correo electrónico o SMS, quedará acoplado a canales que aún no debería conocer y deberá modificarse cuando aparezca uno nuevo.
 
-**Solución:** el desarrollador 1 define los contratos y la lógica común en `NotificationService`. Los desarrolladores 2 y 3 crean las implementaciones de correo electrónico y SMS sin modificar esos contratos. `NotificationService` declara `createNotification()` como Factory Method, por lo que cada servicio concreto decide qué canal crear:
+**Solución:** el desarrollador 1 define el contrato `MessageChannel` y la lógica común en `MessageService`, sin depender de canales concretos. Más adelante, los desarrolladores 2 y 3 incorporan email y SMS sin modificar el módulo original. `MessageService` declara `createMessageChannel()` como Factory Method, por lo que cada servicio concreto decide qué canal crear:
 
 Cada bloque siguiente corresponde a un archivo Java independiente:
 
-#### Desarrollador 1: contratos y lógica común
+#### Desarrollador 1: módulo genérico de mensajería
 
-`Notification.java`
+`MessageChannel.java`
 
 ```java
-public interface Notification {
+public interface MessageChannel {
     String send(String message);
 }
 ```
 
-`NotificationService.java`
+`MessageService.java`
 
 ```java
-public abstract class NotificationService {
-    public abstract Notification createNotification();
+public abstract class MessageService {
+    public abstract MessageChannel createMessageChannel();
 
-    public String notifyUser(String message) {
-        Notification notification = createNotification();
-        return notification.send(message);
+    public String sendMessage(String message) {
+        MessageChannel channel = createMessageChannel();
+        return channel.send(message);
     }
 }
 ```
 
-#### Desarrollador 2: notificaciones por correo electrónico
+#### Desarrollador 2: canal de correo electrónico
 
 El correo electrónico necesita un destinatario y un asunto, datos que no aplican a un SMS.
 
 `EmailNotification.java`
 
 ```java
-public class EmailNotification implements Notification {
+public class EmailNotification implements MessageChannel {
     private final String recipient;
     private final String subject;
 
@@ -132,10 +132,10 @@ public class EmailNotification implements Notification {
 }
 ```
 
-`EmailNotificationService.java`
+`EmailMessageService.java`
 
 ```java
-public class EmailNotificationService extends NotificationService {
+public class EmailMessageService extends MessageService {
     private final String recipient;
     private final String subject;
 
@@ -145,20 +145,20 @@ public class EmailNotificationService extends NotificationService {
     }
 
     @Override
-    public Notification createNotification() {
+    public MessageChannel createMessageChannel() {
         return new EmailNotification(recipient, subject);
     }
 }
 ```
 
-#### Desarrollador 3: notificaciones por SMS
+#### Desarrollador 3: canal de SMS
 
 Un SMS se dirige a un número telefónico y tiene un límite de 160 caracteres.
 
 `SmsNotification.java`
 
 ```java
-public class SmsNotification implements Notification {
+public class SmsNotification implements MessageChannel {
     private static final int MAX_MESSAGE_LENGTH = 160;
 
     private final String phoneNumber;
@@ -178,10 +178,10 @@ public class SmsNotification implements Notification {
 }
 ```
 
-`SmsNotificationService.java`
+`SmsMessageService.java`
 
 ```java
-public class SmsNotificationService extends NotificationService {
+public class SmsMessageService extends MessageService {
     private final String phoneNumber;
 
     public SmsNotificationService(String phoneNumber) {
@@ -189,7 +189,7 @@ public class SmsNotificationService extends NotificationService {
     }
 
     @Override
-    public Notification createNotification() {
+    public MessageChannel createMessageChannel() {
         return new SmsNotification(phoneNumber);
     }
 }
@@ -197,21 +197,21 @@ public class SmsNotificationService extends NotificationService {
 
 #### Cliente
 
-El cliente elige el servicio que necesita y trabaja con el contrato `NotificationService`; no necesita conocer cómo se construye cada notificación.
+El cliente elige el servicio que necesita y trabaja con el contrato `MessageService`; no necesita conocer cómo se construye cada canal.
 
 `Main.java`
 
 ```java
 public class Main {
     public static void main(String[] args) {
-        NotificationService emailService = new EmailNotificationService(
+        MessageService emailService = new EmailMessageService(
             "user@example.com",
             "Order update"
         );
-        NotificationService smsService = new SmsNotificationService("+1 555 0100");
+        MessageService smsService = new SmsMessageService("+1 555 0100");
 
-        System.out.println(emailService.notifyUser("Your order has been shipped"));
-        System.out.println(smsService.notifyUser("Your verification code is 123456"));
+        System.out.println(emailService.sendMessage("Your order has been shipped"));
+        System.out.println(smsService.sendMessage("Your verification code is 123456"));
     }
 }
 ```
