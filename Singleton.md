@@ -40,7 +40,9 @@ public final class MyClass {
 
 ### 1. Configuración compartida
 
-Una aplicación puede centralizar datos de configuración disponibles para todos sus componentes:
+**Problema:** distintos componentes, como la pantalla de inicio, el servicio de pagos y el envío de notificaciones, necesitan consultar la misma configuración de la aplicación. Si cada componente crea su propia configuración, pueden aparecer valores inconsistentes, trabajo de carga duplicado y cambios difíciles de coordinar.
+
+**Solución:** `Configuration` concentra esos datos y expone una única instancia. Todos los componentes consultan el mismo objeto, por lo que trabajan con el mismo nombre de aplicación y cualquier otra configuración compartida que se agregue posteriormente:
 
 ```java
 public final class Configuration {
@@ -75,7 +77,9 @@ System.out.println(first.getApplicationName()); // My application
 
 ### 2. Registro de eventos
 
-Un registro único puede recibir mensajes desde distintas partes de la aplicación:
+**Problema:** varias partes de la aplicación deben registrar eventos, por ejemplo al autenticar un usuario, procesar un pago o detectar un error. Si cada parte crea su propio registrador, cada uno podría abrir su propio archivo o conexión de salida, duplicando recursos y dejando los mensajes dispersos.
+
+**Solución:** `EventLogger` proporciona un único punto de registro. Los distintos componentes reutilizan la misma instancia, lo que permite centralizar la salida de los eventos y evitar crear registradores innecesarios:
 
 ```java
 public final class EventLogger {
