@@ -114,7 +114,7 @@ smsService.notifyUser("Your verification code is 123456");
 
 ### 2. Generación de documentos
 
-**Problema:** una herramienta de informes puede exportar el mismo contenido a formatos distintos, como PDF y CSV. Si la lógica que prepara el informe instancia cada exportador directamente, queda acoplada a los formatos disponibles y se vuelve más difícil agregar uno nuevo, como HTML.
+**Problema:** una herramienta de informes puede exportar el mismo contenido a formatos distintos, como PDF y DOC. Si la lógica que prepara el informe instancia cada exportador directamente, queda acoplada a los formatos disponibles y se vuelve más difícil agregar uno nuevo, como HTML.
 
 **Solución:** `ReportGenerator` prepara el contenido y delega la creación del exportador en `createExporter()`. Cada generador concreto entrega el exportador apropiado, mientras que la lógica de generación trabaja con `ReportExporter`:
 
@@ -130,10 +130,10 @@ public class PdfReportExporter implements ReportExporter {
     }
 }
 
-public class CsvReportExporter implements ReportExporter {
+public class DocReportExporter implements ReportExporter {
     @Override
     public void export(String content) {
-        System.out.println("Exporting CSV: " + content);
+        System.out.println("Exporting DOC: " + content);
     }
 }
 
@@ -153,20 +153,20 @@ public class PdfReportGenerator extends ReportGenerator {
     }
 }
 
-public class CsvReportGenerator extends ReportGenerator {
+public class DocReportGenerator extends ReportGenerator {
     @Override
     public ReportExporter createExporter() {
-        return new CsvReportExporter();
+        return new DocReportExporter();
     }
 }
 ```
 
 ```java
 ReportGenerator pdfGenerator = new PdfReportGenerator();
-ReportGenerator csvGenerator = new CsvReportGenerator();
+ReportGenerator docGenerator = new DocReportGenerator();
 
 pdfGenerator.generate("Monthly sales report");
-csvGenerator.generate("Monthly sales report");
+docGenerator.generate("Monthly sales report");
 ```
 
 ## ¿Cuándo utilizarlo?
