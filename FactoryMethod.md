@@ -202,23 +202,35 @@ El desarrollador 4 concentra la lógica de envío en un método que recibe `Mess
 `Main.java`
 
 ```java
-public class Main {
-    private static void send(MessageService service, String message) {
-        System.out.println(service.sendMessage(message));
+
+
+public void main() {
+    MessageService service = null;
+    int option = 0;
+    
+    System.out.println("Por cual medio desea enviar el mensaje?");
+    System.out.println("1. Correo electronico");
+    System.out.println("2. Mensaje SMS");
+    option = Integer.parseInt(IO.readln());
+
+    switch (option) {
+        case 1:
+            service = new EmailMessageService("user@example.com", "Order update");
+            break;
+
+        case 2:
+            service = new SmsMessageService("+1 555 0100");
+            break;
+
+        default:
+            System.out.println("Invalid option");
+            return;
     }
 
-    public static void main(String[] args) {
-        send(
-            new EmailMessageService("user@example.com", "Order update"),
-            "Your order has been shipped"
-        );
+    System.out.println(service.sendMessage("Your order has been shipped"));
 
-        send(
-            new SmsMessageService("+1 555 0100"),
-            "Your verification code is 123456"
-        );
-    }
 }
+
 ```
 
 ### 2. Generación de documentos
